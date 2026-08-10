@@ -137,6 +137,50 @@ const server = http.createServer((req, res) => {
     }
 
 
+    // GET METHOD
+
+    if (req.url === "/users" && req.method === "GET") {
+
+        fs.readFile("user.json", "utf8", (err, data) => {
+
+            if (err) {
+                console.log(err);
+                res.end("Error reading data");
+                return;
+            }
+
+            let users = JSON.parse(data);
+
+            if (!Array.isArray(users)) {
+                users = [users];
+            }
+
+            const result = [];
+
+            for (let i = 0; i < users.length; i++) {
+
+                const user = {
+                    username: users[i].username,
+                    empCode: users[i].empCode,
+                    department: users[i].userInfo.department,
+                    city: users[i].userInfo.city
+                };
+
+                result.push(user);
+            }
+
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify(result, null, 2));
+
+        });
+
+        return;
+    }
+
+
     // ROUTE NOT FOUND
 
     res.end("Route not found");
